@@ -1,0 +1,35 @@
+name: Ubuntu
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        cc: [gcc, clang]
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install --yes libboost-all-dev
+
+    - name: Install PVS
+      run:  curl -L https://gist.githubusercontent.com/Myralllka/e8f4e93e6bf0134b693371f1aad9d860/raw/57c66f2d90bcb5ebf94f31b4b927fd93e3b57734/install_pvs_on_linux.sh | bash
+
+    - name: Configure
+      run: CC=${{ matrix.cc }} CXX=${{ matrix.cxx }} cmake -G"Unix Makefiles" -DENABLE_CONAN=OFF -Bbuild 
+
+    - name: Build
+      run: cmake --build build
