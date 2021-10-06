@@ -14,7 +14,7 @@ option(ENABLE_SANITIZERS    "Use sanitizers to detect errors." OFF) # Option for
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 # Include fixed CMake configuration
-include(cmake/config.cmake)
+include(../cmake/config.cmake)
 
 # Include headers
 include_directories(include)
