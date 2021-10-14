@@ -1,17 +1,20 @@
 #ifndef LOOKUPTABLE_H
 #define LOOKUPTABLE_H
 
-#include <cstdlib>
-#include <map>
+
 #include <string>
 
 class LookupTable {
-    std::map<int, std::string> data_;
+private:
+    class [[maybe_unused]] Impl;
+    class [[maybe_unused]] Impl_map;
+
+    Impl *m_pimpl;
 
 public:
-    LookupTable() = default;
+    LookupTable();
 
-    ~LookupTable() = default;
+    ~LookupTable();
 
     // copy and move semantics deleted for sake of simplicity:
     LookupTable(const LookupTable &) = delete;
@@ -22,13 +25,14 @@ public:
 
     LookupTable &operator=(LookupTable &&) = delete;
 
+    // implementation
     void insert(int key, const std::string &name);
 
     void remove(int key);
 
-    const std::string *name(int key) const;
+    [[nodiscard]] const std::string *name(int key) const;
 
-    size_t count() const;
+    [[nodiscard]] size_t count() const;
 
     void clear();
 };
