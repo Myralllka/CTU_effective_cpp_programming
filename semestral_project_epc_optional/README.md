@@ -143,7 +143,7 @@ class optional
 - `void reset()`
     - If the actual object (`*this`) does contain value, this is destructed.
     - Otherwise, it has no effect.
-- `template <typename... Ts> void emplace(Ts...&& args)`
+- `template <typename... Ts> void emplace(Ts&&... args)`
     - If the actual object (`*this`) does contain value, this is destructed first.
     - Then, it initializes the new value by the perfect forwarding technique applied to the arguments `args...`.
 
