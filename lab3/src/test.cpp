@@ -1,57 +1,72 @@
-#define BOOST_TEST_MODULE LookupTableTest
+#define BOOST_TEST_MODULE PairIntOwnerTest
 #include <boost/test/included/unit_test.hpp>
 
-#include <iostream>
-#include <map>
-#include <string>
-#include <unordered_map>
+#include "PairInt.h"
+#include "PairIntOwner.h"
 
-#include "LookupTable.h"
+#include <cstdint>
 
-BOOST_AUTO_TEST_CASE( LookupTableTest )
+BOOST_AUTO_TEST_CASE( PairIntOwnerTest )
 {
-    // fails with PIMPLed implementation:
-    BOOST_TEST( sizeof(LookupTable) == sizeof( std::map<int, std::string> ) );
+    PairIntOwner emtpy;
 
-    // fails with original implementation:
-    BOOST_TEST( sizeof(LookupTable) == sizeof(void*) );
-    
-    LookupTable names;
-    
-    BOOST_TEST( names.count() == 0);
-    
-    names.insert(1, "John Doe");
-    names.insert(2, "Jane Doe");
-    
-    BOOST_TEST( names.count() == 2 );    
-    BOOST_TEST( names.name(1) != nullptr );
-    BOOST_TEST( names.name(2) != nullptr );
-    BOOST_TEST( names.name(3) == nullptr);    
-    BOOST_TEST( names.name(1)->compare("John Doe") == 0 );
-    BOOST_TEST( names.name(2)->compare("Jane Doe") == 0 );
+    BOOST_TEST( PairInt::constructed() == 0 );
+    BOOST_TEST( PairInt::alive() == 0 );
+    BOOST_TEST( PairInt::destructed() == 0 );
 
-    // will neither insert nor overwrite:
-    names.insert(2, "Johnny Doe");
+    {
+        PairIntOwner included(PairIntOwner::INCLUDED, 1, 2);
 
-    BOOST_TEST( names.count() == 2 );
-    BOOST_TEST( names.name(2) != nullptr );
-    BOOST_TEST( names.name(2)->compare("Jane Doe") == 0 );
-    
-    names.insert(3, "Johnny Doe");
-    
-    BOOST_TEST( names.count() == 3 );    
-    BOOST_TEST (names.name(3) != nullptr);
-    BOOST_TEST( names.name(3)->compare("Johnny Doe") == 0 );
-    
-    names.remove(2);
-    
-    BOOST_TEST( names.count() == 2 );
-    BOOST_TEST( names.name(2) == nullptr );
-    
-    names.clear();
-    
-    BOOST_TEST( names.count() == 0 );
-    BOOST_TEST (names.name(1) == nullptr);
-    BOOST_TEST (names.name(2) == nullptr);
-    BOOST_TEST (names.name(3) == nullptr);
+        BOOST_TEST( PairInt::constructed() == 1 );
+        BOOST_TEST( PairInt::alive() == 1 );
+        BOOST_TEST( PairInt::destructed() == 0 );
+
+        PairInt& value = included.value();
+
+        BOOST_TEST( value.a() == 1 );
+        BOOST_TEST( value.b() == 2 );
+
+        // check if value is in included storage of included:
+
+        uintptr_t start_addr_included = (uintptr_t)(&included);
+        uintptr_t end_addr_included = start_addr_included + sizeof(included) - 1;
+        uintptr_t start_addr_value = (uintptr_t)(&value);
+        uintptr_t end_addr_value = start_addr_value + sizeof(PairInt) - 1;
+
+        BOOST_TEST( start_addr_value >= start_addr_included );
+        BOOST_TEST( end_addr_value <= end_addr_included );
+    }
+
+    BOOST_TEST( PairInt::constructed() == 1 );
+    BOOST_TEST( PairInt::alive() == 0 );
+    BOOST_TEST( PairInt::destructed() == 1 );
+
+    {
+        PairIntOwner dynamic(PairIntOwner::DYNAMIC, 3, 4);
+
+        BOOST_TEST( PairInt::constructed() == 2 );
+        BOOST_TEST( PairInt::alive() == 1 );
+        BOOST_TEST( PairInt::destructed() == 1 );
+
+        PairInt& value = dynamic.value();
+
+        BOOST_TEST( value.a() == 3 );
+        BOOST_TEST( value.b() == 4 );
+
+        // check if value is NOT in included storage of dynamic:
+
+        uintptr_t start_addr_dynamic = (uintptr_t)(&dynamic);
+        uintptr_t end_addr_dynamic = start_addr_dynamic + sizeof(dynamic) - 1;
+        uintptr_t start_addr_value = (uintptr_t)(&value);
+        uintptr_t end_addr_value = start_addr_value + sizeof(PairInt) - 1;
+
+        BOOST_TEST((
+                           ( start_addr_value < start_addr_dynamic && end_addr_value < start_addr_dynamic ) ||
+                           ( start_addr_value > end_addr_dynamic && end_addr_value > end_addr_dynamic )
+                   ));
+    }
+
+    BOOST_TEST( PairInt::constructed() == 2 );
+    BOOST_TEST( PairInt::alive() == 0 );
+    BOOST_TEST( PairInt::destructed() == 2 );
 }
