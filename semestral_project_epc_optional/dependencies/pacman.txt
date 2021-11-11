@@ -1,8 +1,0 @@
-boost 
-git
-curl
-wget
-cmake
-gcc
-make
-
