@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(PROJECT_NAME storage)
+set(PROJECT_NAME test)
 project(${PROJECT_NAME} CXX)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -11,7 +11,7 @@ set(ENABLE_PVS_STUDIO OFF)
 #! ENABLE_SANITIZERS is the option for the test builds!
 #  Definitely enable it while developing.
 #  Disable it for the production builds and before submitting for grading!
-set(ENABLE_SANITIZERS OFF)
+set(ENABLE_SANITIZERS OFF) 
 
 #! Build release version if not specified otherwise.
 if (NOT CMAKE_BUILD_TYPE)
@@ -25,7 +25,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 include_directories(include)
 
 # Project source compilation
-add_executable(${PROJECT_NAME} src/test.cpp include/PairInt.h src/PaitInt.cpp src/PairIntOwner.cpp include/PairIntOwner.h)
+add_executable(${PROJECT_NAME} src/main.cpp)
 
 # Add external packages
 find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)

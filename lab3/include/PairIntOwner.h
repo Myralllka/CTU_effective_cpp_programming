@@ -5,9 +5,20 @@
 #ifndef STORAGE_PAIRINTOWNER_H
 #define STORAGE_PAIRINTOWNER_H
 
-#include <PairInt.h>
+#include "PairInt.h"
 
 class PairIntOwner {
+private:
+    union {
+        alignas(PairInt) unsigned char m_value[sizeof(PairInt)];
+        PairInt *m_dyn_object;
+    };
+    bool m_is_dyn = false;
+
+
+    PairInt *ptr() {
+        return (m_is_dyn ? m_dyn_object : reinterpret_cast<PairInt *>(m_value));
+    }
 
 public:
     enum Storage {
@@ -25,9 +36,9 @@ public:
 
     PairIntOwner operator=(PairIntOwner &&) = delete;
 
-    PairIntOwner(Storage s, int a, int b);
-
     ~PairIntOwner();
+
+    PairIntOwner(Storage s, int a, int b);
 
     PairInt &value();
 };
