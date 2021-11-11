@@ -10,6 +10,11 @@
 #include <memory>
 
 namespace epc {
+    // within namespace epc:
+    struct in_place_t {
+        explicit in_place_t() = default;
+    };
+
     template<typename T>
     class optional {
     private:
@@ -29,17 +34,17 @@ namespace epc {
             if (m_is_initialized) std::destroy_at(ptr());
         };
 
-        optional(const optional &other) : m_is_initialized(false) {
-            if (not other.m_is_initialized) return;
-            std::copy(m_buffer, other.m_el);
-        }
+//        optional(const optional &other) : m_is_initialized(true) {
+//            if (not other.m_is_initialized) return;
+//            std::copy(m_buffer, other.m_el);
+//        }
 
         optional(optional &&other) noexcept: m_is_initialized(true) {
             std::construct_at<T>(ptr(), std::forward<T>(other.m_buffer));
         }
 
         template<typename... Ts>
-        [[maybe_unused]] constexpr explicit optional(std::in_place_t, Ts &&... args) : m_is_initialized(true) {
+        [[maybe_unused]] explicit optional(epc::in_place_t, Ts &&... args) : m_is_initialized(true) {
             std::construct_at<T>(ptr(), std::forward<Ts>(args)...);
         }
 
@@ -73,8 +78,7 @@ namespace epc {
         }
 
         T &operator*() {
-            std::cerr << "not implemented_yet" << std::endl;
-            return new T;
+            return *ptr();
         }
 
         explicit operator bool() const {
@@ -105,11 +109,6 @@ namespace epc {
 
     template<typename T>
     void swap(optional<T> &a, optional<T> &b);
-
-    // within namespace epc:
-    struct in_place_t {
-        explicit in_place_t() = default;
-    };
 }
 
 #endif //TEST_OPTIONAL_H

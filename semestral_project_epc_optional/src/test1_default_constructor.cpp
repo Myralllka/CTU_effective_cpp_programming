@@ -1,7 +1,4 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
-#define BOOST_TEST_MODULE epc_optional_test_2
+#define BOOST_TEST_MODULE epc_optional_test_1
 
 #include <boost/test/included/unit_test.hpp>
 
@@ -11,36 +8,15 @@
 #include <optional>
 
 class X {
+    int i_;
+
     static long constructed_;
-    static long default_constructed_;
-    static long converting_constructed_1_;
-    static long converting_constructed_2_;
-    static long converting_constructed_3_;
     static long alive_;
     static long destructed_;
 public:
 
-    X() {
+    X(int i) : i_(i) {
         constructed_++;
-        default_constructed_++;
-        alive_++;
-    }
-
-    X(const int &) {
-        constructed_++;
-        converting_constructed_1_++;
-        alive_++;
-    }
-
-    X(int &&) {
-        constructed_++;
-        converting_constructed_2_++;
-        alive_++;
-    }
-
-    X(double) {
-        constructed_++;
-        converting_constructed_3_++;
         alive_++;
     }
 
@@ -57,15 +33,9 @@ public:
 
     X &operator=(X &&) = delete;
 
+    operator const int &() const { return i_; }
+
     static long constructed() { return constructed_; }
-
-    static long default_constructed() { return default_constructed_; }
-
-    static long converting_constructed_1() { return converting_constructed_1_; }
-
-    static long converting_constructed_2() { return converting_constructed_2_; }
-
-    static long converting_constructed_3() { return converting_constructed_3_; }
 
     static long alive() { return alive_; }
 
@@ -73,20 +43,17 @@ public:
 };
 
 long X::constructed_ = 0;
-long X::default_constructed_ = 0;
-long X::converting_constructed_1_ = 0;
-long X::converting_constructed_2_ = 0;
-long X::converting_constructed_3_ = 0;
 long X::alive_ = 0;
 long X::destructed_ = 0;
 
-namespace ns = std;
-//namespace ns = epc;
+//namespace ns = std;
+namespace ns = epc;
 
-BOOST_AUTO_TEST_CASE(EpcOptionalTest2)
+BOOST_AUTO_TEST_CASE(EpcOptionalTest1)
 {
     {
         ns::optional<X> o1;
+
         BOOST_TEST(X::constructed() == 0);
         BOOST_TEST(X::alive() == 0);
         BOOST_TEST(X::destructed() == 0);
@@ -99,68 +66,28 @@ BOOST_AUTO_TEST_CASE(EpcOptionalTest2)
     BOOST_TEST(X::destructed() == 0);
 
     {
-        ns::optional<X> o2(ns::in_place_t{});
+        ns::optional<X> o2(ns::in_place_t{}, 1);
 
         BOOST_TEST(X::constructed() == 1);
-        BOOST_TEST(X::default_constructed() == 1);
         BOOST_TEST(X::alive() == 1);
         BOOST_TEST(X::destructed() == 0);
 
         BOOST_TEST((bool) o2 == true);
+
+        X &value = *o2;
+
+        BOOST_TEST((int) value == 1);
+
+        uintptr_t start_addr_o2 = (uintptr_t) (&o2);
+        uintptr_t end_addr_o2 = start_addr_o2 + sizeof(o2) - 1;
+        uintptr_t start_addr_value = (uintptr_t) (&value);
+        uintptr_t end_addr_value = start_addr_value + sizeof(X) - 1;
+
+        BOOST_TEST(start_addr_value >= start_addr_o2);
+        BOOST_TEST(end_addr_value <= end_addr_o2);
     }
 
     BOOST_TEST(X::constructed() == 1);
     BOOST_TEST(X::alive() == 0);
     BOOST_TEST(X::destructed() == 1);
-
-    {
-        int i = 1;
-
-        ns::optional<X> o3(ns::in_place_t{}, i);
-
-        BOOST_TEST(X::constructed() == 2);
-        BOOST_TEST(X::converting_constructed_1() == 1);
-        BOOST_TEST(X::alive() == 1);
-        BOOST_TEST(X::destructed() == 1);
-
-        BOOST_TEST((bool) o3 == true);
-    }
-
-    BOOST_TEST(X::constructed() == 2);
-    BOOST_TEST(X::alive() == 0);
-    BOOST_TEST(X::destructed() == 2);
-
-    {
-        ns::optional<X> o4(ns::in_place_t{}, 1);
-
-        BOOST_TEST(X::constructed() == 3);
-        BOOST_TEST(X::converting_constructed_2() == 1);
-        BOOST_TEST(X::alive() == 1);
-        BOOST_TEST(X::destructed() == 2);
-
-        BOOST_TEST((bool) o4 == true);
-    }
-
-    BOOST_TEST(X::constructed() == 3);
-    BOOST_TEST(X::alive() == 0);
-    BOOST_TEST(X::destructed() == 3);
-
-    {
-        ns::optional<X> o5(ns::in_place_t{}, 1.0);
-
-        BOOST_TEST(X::constructed() == 4);
-        BOOST_TEST(X::converting_constructed_3() == 1);
-        BOOST_TEST(X::alive() == 1);
-        BOOST_TEST(X::destructed() == 3);
-
-        BOOST_TEST((bool) o5 == true);
-    }
-
-    BOOST_TEST(X::constructed() == 4);
-    BOOST_TEST(X::default_constructed() == 1);
-    BOOST_TEST(X::converting_constructed_1() == 1);
-    BOOST_TEST(X::converting_constructed_2() == 1);
-    BOOST_TEST(X::converting_constructed_3() == 1);
-    BOOST_TEST(X::alive() == 0);
-    BOOST_TEST(X::destructed() == 4);
 }
