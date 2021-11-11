@@ -1,3 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 #define BOOST_TEST_MODULE epc_optional_test_2
 
 #include <boost/test/included/unit_test.hpp>
@@ -84,7 +87,6 @@ BOOST_AUTO_TEST_CASE(EpcOptionalTest2)
 {
     {
         ns::optional<X> o1;
-
         BOOST_TEST(X::constructed() == 0);
         BOOST_TEST(X::alive() == 0);
         BOOST_TEST(X::destructed() == 0);
