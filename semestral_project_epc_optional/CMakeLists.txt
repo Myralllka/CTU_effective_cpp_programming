@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(PROJECT_NAME test)
+set(PROJECT_NAME semestral_project)
 project(${PROJECT_NAME} CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Options
 set(WARNINGS_AS_ERRORS ON)
@@ -25,14 +25,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 include_directories(include)
 
 # Project source compilation
-add_executable(${PROJECT_NAME} src/main.cpp)
-add_executable(test_1 src/test_default_constructor.cpp)
-add_executable(test_2 src/test_constructor.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/test3_copy.cpp src/test4_copy_move.cpp src/test2_constructor.cpp src/test1_default_constructor.cpp)
+add_executable(test_1 src/test1_default_constructor.cpp)
+add_executable(test_2 src/test2_constructor.cpp)
+add_executable(test_3 src/test3_copy.cpp)
+add_executable(test_4 src/test4_copy_move.cpp)
 
 # Add external packages
-find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
-include_directories(${Boost_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} Boost::program_options)
+#find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
+#include_directories(${Boost_INCLUDE_DIR})
+#target_link_libraries(${PROJECT_NAME} Boost::program_options)
 
 # set output directory (bin)
 set_target_properties(${PROJECT_NAME}
