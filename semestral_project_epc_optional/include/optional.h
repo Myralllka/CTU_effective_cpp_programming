@@ -22,29 +22,49 @@ namespace epc {
 
         T *ptr() { return reinterpret_cast<T *>(&m_buffer); }
 
-        bool m_is_initialized;
+        bool m_has_value;
 
         explicit operator T &() { return *ptr(); }
 
     public:
-        //        Constructors and destructor
-        optional() : m_is_initialized(false) {};
+        //        Constructor and destructor
+        optional() : m_has_value(false) {};
 
         ~optional() {
-            if (m_is_initialized) std::destroy_at(ptr());
+            if (m_has_value) std::destroy_at(ptr());
         };
 
-//        optional(const optional &other) : m_is_initialized(true) {
-//            if (not other.m_is_initialized) return;
-//            std::copy(m_buffer, other.m_el);
-//        }
+        // copy constructor
+        optional(const optional &other) : m_has_value(true) {
+            // if other is empty = do nothing
+            if (not other.m_has_value) {
+                m_has_value = false;
+                return;
+            }
 
-        optional(optional &&other) noexcept: m_is_initialized(true) {
-            std::construct_at<T>(ptr(), std::forward<T>(other.m_buffer));
+            if (std::is_trivially_copyable_v<T>) {
+                memcpy(&m_buffer, &other.m_buffer, sizeof(&other.m_buffer));
+            } else {
+                new(ptr()) T(std::forward<T>(*ptr()));
+            }
+        }
+
+        // move constructor
+        optional(optional &&other)  noexcept : m_has_value(true) {
+            // if other is empty = do nothing
+            if (not other.m_has_value) {
+                m_has_value = false;
+                return;
+            }
+
+            new(ptr()) T(std::move(*other.ptr()));
+            
+            other.m_has_value = false;
+            std::destroy_at(other.ptr());
         }
 
         template<typename... Ts>
-        [[maybe_unused]] explicit optional(epc::in_place_t, Ts &&... args) : m_is_initialized(true) {
+        [[maybe_unused]] explicit optional(epc::in_place_t, Ts &&... args) : m_has_value(true) {
             std::construct_at<T>(ptr(), std::forward<Ts>(args)...);
         }
 
@@ -63,16 +83,19 @@ namespace epc {
         //        Other member functions
 
         const T *operator->() const {
+            // TODO
             std::cerr << "not implemented_yet" << std::endl;
             exit;
         }
 
         T *operator->() {
+            // TODO
             std::cerr << "not implemented_yet" << std::endl;
             exit;
         }
 
         const T &operator*() const {
+            // TODO
             std::cerr << "not implemented_yet" << std::endl;
             exit;
         }
@@ -82,11 +105,11 @@ namespace epc {
         }
 
         explicit operator bool() const {
-            return m_is_initialized;
+            return m_has_value;
         }
 
         void swap(optional &other) {
-            if (other.m_is_initialized) {
+            if (other.m_has_value) {
 
             } else {
                 std::cerr << "not implemented_yet" << std::endl;

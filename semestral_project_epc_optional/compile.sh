@@ -10,4 +10,4 @@ mkdir -p build
   cmake -G"Unix Makefiles" ..
   make
 )
-rm -rf build
+#rm -rf build

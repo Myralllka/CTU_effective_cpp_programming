@@ -13,6 +13,8 @@ set(ENABLE_PVS_STUDIO ON)
 #  Disable it for the production builds and before submitting for grading!
 set(ENABLE_SANITIZERS ON)
 
+set (cmake_xcc_compiler clang)
+
 #! Build release version if not specified otherwise.
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
