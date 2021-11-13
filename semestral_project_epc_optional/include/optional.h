@@ -20,7 +20,13 @@ namespace epc {
     private:
         std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer;
 
-        T *ptr() { return reinterpret_cast<T *>(&m_buffer); }
+        T *ptr() {
+            return reinterpret_cast<T *>(&m_buffer);
+        }
+
+        const T *ptr() const {
+            return reinterpret_cast<const T *>(&m_buffer);
+        }
 
         bool m_has_value;
 
@@ -45,22 +51,18 @@ namespace epc {
             if (std::is_trivially_copyable_v<T>) {
                 memcpy(&m_buffer, &other.m_buffer, sizeof(&other.m_buffer));
             } else {
-                new(ptr()) T(std::forward<T>(*ptr()));
+                std::construct_at<T>(ptr(), *other);
             }
         }
 
         // move constructor
-        optional(optional &&other)  noexcept : m_has_value(true) {
+        optional(optional &&other) noexcept: m_has_value(true) {
             // if other is empty = do nothing
             if (not other.m_has_value) {
                 m_has_value = false;
                 return;
             }
-
-            new(ptr()) T(std::move(*other.ptr()));
-            
-            other.m_has_value = false;
-            std::destroy_at(other.ptr());
+            std::construct_at<T>(ptr(), std::move(*other));
         }
 
         template<typename... Ts>
@@ -70,34 +72,28 @@ namespace epc {
 
         //      Assignment operators
 
-        optional &operator=(const optional &other) {
-            std::cerr << "not implemented_yet" << std::endl;
-            exit;
-        }
-
-        optional &operator=(optional &&other) noexcept {
-            std::cerr << "not implemented_yet" << std::endl;
-            exit;
-        }
+//        optional &operator=(const optional &other) {
+//            std::cerr << "not implemented_yet" << std::endl;
+//            exit;
+//        }
+//
+//        optional &operator=(optional &&other) noexcept {
+//            std::cerr << "not implemented_yet" << std::endl;
+//            exit;
+//        }
 
         //        Other member functions
 
         const T *operator->() const {
-            // TODO
-            std::cerr << "not implemented_yet" << std::endl;
-            exit;
+            return ptr();
         }
 
         T *operator->() {
-            // TODO
-            std::cerr << "not implemented_yet" << std::endl;
-            exit;
+            return ptr();
         }
 
         const T &operator*() const {
-            // TODO
-            std::cerr << "not implemented_yet" << std::endl;
-            exit;
+            return *ptr();
         }
 
         T &operator*() {
@@ -108,30 +104,30 @@ namespace epc {
             return m_has_value;
         }
 
-        void swap(optional &other) {
-            if (other.m_has_value) {
-
-            } else {
-                std::cerr << "not implemented_yet" << std::endl;
-                exit;
-            }
-        }
-
-        void reset() {
-            std::cerr << "not implemented_yet" << std::endl;
-        }
-
+//        void swap(optional &other) {
+//            if (other.m_has_value) {
 //
-        template<typename... Ts>
-        void emplace(Ts &&... args) {
-            std::cerr << "not implemented_yet" << std::endl;
-        }
+//            } else {
+//                std::cerr << "not implemented_yet" << std::endl;
+//                exit;
+//            }
+//        }
+//
+//        void reset() {
+//            std::cerr << "not implemented_yet" << std::endl;
+//        }
+//
+//
+//        template<typename... Ts>
+//        void emplace(Ts &&... args) {
+//            std::cerr << "not implemented_yet" << std::endl;
+//        }
 
 
     };
 
-    template<typename T>
-    void swap(optional<T> &a, optional<T> &b);
+//    template<typename T>
+//    void swap(optional<T> &a, optional<T> &b);
 }
 
 #endif //TEST_OPTIONAL_H

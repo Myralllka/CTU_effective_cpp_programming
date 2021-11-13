@@ -67,8 +67,8 @@ long X::move_constructed_ = 0;
 long X::alive_ = 0;
 long X::destructed_ = 0;
 
-namespace ns = std;
-//namespace ns = epc;
+//namespace ns = std;
+namespace ns = epc;
 
 BOOST_AUTO_TEST_CASE(EpcOptionalTest4)
 {
