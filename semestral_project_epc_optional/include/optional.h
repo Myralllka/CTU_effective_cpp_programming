@@ -20,20 +20,18 @@ namespace epc {
     private:
         std::aligned_storage_t<sizeof(T), alignof(T)> m_buffer;
 
-        T *ptr() {
+        bool m_has_value;
+
+        [[maybe_unused]] T *ptr() {
             return reinterpret_cast<T *>(&m_buffer);
         }
 
-        const T *ptr() const {
+        [[maybe_unused]] const T *ptr() const {
             return reinterpret_cast<const T *>(&m_buffer);
         }
 
-        bool m_has_value;
-
-        explicit operator T &() { return *ptr(); }
-
     public:
-        //        Constructor and destructor
+        // default constructor and destructor
         optional() : m_has_value(false) {};
 
         ~optional() {
@@ -47,11 +45,7 @@ namespace epc {
                 m_has_value = false;
                 return;
             }
-
-//            if (std::is_trivially_copyable_v<T>) {
-//            } else {
             std::construct_at<T>(ptr(), *other);
-//            }
         }
 
         // move constructor
@@ -71,15 +65,35 @@ namespace epc {
 
         //      Assignment operators
 
-//        optional &operator=(const optional &other) {
-//            std::cerr << "not implemented_yet" << std::endl;
-//            exit;
-//        }
-//
-//        optional &operator=(optional &&other) noexcept {
-//            std::cerr << "not implemented_yet" << std::endl;
-//
-//        }
+        // copy assignment operator
+        optional &operator=(const optional &other) {
+            if (other.m_has_value) {
+                if (m_has_value) {
+                    *ptr() = *other.ptr();
+                } else {
+                    m_has_value = true;
+                    std::construct_at<T>(ptr(), *other);
+                }
+            } else if (m_has_value) {
+                reset();
+            }
+            return *this;
+        }
+
+        // move assignment operator
+        optional &operator=(optional &&other) noexcept {
+            if (other.m_has_value) {
+                if (m_has_value) {
+                    *ptr() = std::move(*other.ptr());
+                } else {
+                    m_has_value = true;
+                    std::construct_at<T>(ptr(), std::move(*other));
+                }
+            } else if (m_has_value) {
+                reset();
+            }
+            return *this;
+        }
 
         //        Other member functions
 
@@ -99,24 +113,30 @@ namespace epc {
             return *ptr();
         }
 
-        explicit operator bool() const {
+        [[maybe_unused]] explicit operator bool() const {
             return m_has_value;
         }
 
-//        void swap(optional &other) {
+//        [[maybe_unused]] void swap(optional &other) {
 //            if (other.m_has_value) {
+//                if (m_has_value) {
+//                    std::swap(**ptr(), *other.ptr());
+//                } else {
 //
+//                }
 //            } else {
-//                std::cerr << "not implemented_yet" << std::endl;
-//                exit;
+//
 //            }
 //        }
-//
-//        void reset() {
-//            std::cerr << "not implemented_yet" << std::endl;
-//        }
-//
-//
+
+        [[maybe_unused]] void reset() {
+            if (m_has_value) {
+                std::destroy_at(ptr());
+                m_has_value = false;
+            }
+        }
+
+
 //        template<typename... Ts>
 //        void emplace(Ts &&... args) {
 //            std::cerr << "not implemented_yet" << std::endl;
