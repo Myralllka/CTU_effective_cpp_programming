@@ -13,7 +13,10 @@ set(ENABLE_PVS_STUDIO ON)
 #  Disable it for the production builds and before submitting for grading!
 set(ENABLE_SANITIZERS ON)
 
-set (cmake_xcc_compiler clang)
+#set(CMAKE_CXX_COMPILER clang++)
+
+# warnings as errors should be imported here.
+include(cmake/defaults/CompilerWarnings.cmake)
 
 #! Build release version if not specified otherwise.
 if (NOT CMAKE_BUILD_TYPE)
@@ -27,11 +30,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 include_directories(include)
 
 # Project source compilation
-add_executable(${PROJECT_NAME} src/main.cpp src/test3_copy.cpp src/test4_copy_move.cpp src/test2_constructor.cpp src/test1_default_constructor.cpp)
-add_executable(test_1 src/test1_default_constructor.cpp)
-add_executable(test_2 src/test2_constructor.cpp)
-add_executable(test_3 src/test3_copy.cpp)
-add_executable(test_4 src/test4_copy_move.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/tests/test3_copy.cpp src/tests/test4_copy_move.cpp src/tests/test2_constructor.cpp src/tests/test1_default_constructor.cpp src/tests/test5_copy_assignment.cpp)
+add_executable(test_1 src/tests/test1_default_constructor.cpp)
+add_executable(test_2 src/tests/test2_constructor.cpp)
+add_executable(test_3 src/tests/test3_copy.cpp)
+add_executable(test_4 src/tests/test4_copy_move.cpp)
+add_executable(test_5 src/tests/test5_copy_assignment.cpp)
 
 # Add external packages
 #find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
@@ -45,7 +49,7 @@ set_target_properties(${PROJECT_NAME}
 
 #####################################
 # Define ALL_TARGETS variable to use in PVS and Sanitizers
-set(ALL_TARGETS ${PROJECT_NAME})
+set(ALL_TARGETS ${PROJECT_NAME} test_1 test_2 test_3 test_4 test_5)
 
 # Include fixed CMake configuration
 include(cmake/config.cmake)

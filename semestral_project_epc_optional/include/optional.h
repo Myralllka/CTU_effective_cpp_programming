@@ -48,11 +48,10 @@ namespace epc {
                 return;
             }
 
-            if (std::is_trivially_copyable_v<T>) {
-                memcpy(&m_buffer, &other.m_buffer, sizeof(&other.m_buffer));
-            } else {
-                std::construct_at<T>(ptr(), *other);
-            }
+//            if (std::is_trivially_copyable_v<T>) {
+//            } else {
+            std::construct_at<T>(ptr(), *other);
+//            }
         }
 
         // move constructor
@@ -79,7 +78,7 @@ namespace epc {
 //
 //        optional &operator=(optional &&other) noexcept {
 //            std::cerr << "not implemented_yet" << std::endl;
-//            exit;
+//
 //        }
 
         //        Other member functions
