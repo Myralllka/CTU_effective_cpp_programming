@@ -30,12 +30,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 include_directories(include)
 
 # Project source compilation
-add_executable(${PROJECT_NAME} src/main.cpp src/tests/test3_copy.cpp src/tests/test4_copy_move.cpp src/tests/test2_constructor.cpp src/tests/test1_default_constructor.cpp src/tests/test5_copy_assignment.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/tests/test3_copy.cpp src/tests/test4_copy_move.cpp src/tests/test2_constructor.cpp src/tests/test1_default_constructor.cpp src/tests/test5_copy_assignment.cpp src/tests/test6_move_asignment.cpp)
 add_executable(test_1 src/tests/test1_default_constructor.cpp)
 add_executable(test_2 src/tests/test2_constructor.cpp)
 add_executable(test_3 src/tests/test3_copy.cpp)
 add_executable(test_4 src/tests/test4_copy_move.cpp)
 add_executable(test_5 src/tests/test5_copy_assignment.cpp)
+add_executable(test_6 src/tests/test6_move_asignment.cpp)
 
 # Add external packages
 #find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
