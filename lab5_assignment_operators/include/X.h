@@ -30,29 +30,44 @@ public:
     void swap(X &other) { std::swap(i_, other.i_); }
 
 #ifdef CASE1
-    X& operator=(const X& other) {
+
+    X &operator=(const X &other) {
         std::cout << "(CA)";
-        // ... to be implemented
+        if (this != &other) {
+            i_ = other.i_;
+        }
+        return *this;
     }
 
-    X& operator=(X&& other) {
+    X &operator=(X &&other) {
         std::cout << "(MA)";
-        // ... to be implemented
+        if (this != &other) {
+            i_ = other.i_;
+        }
+        return *this;
     }
+
 #elif defined CASE2
-    X& operator=(const X& other) {
+
+    X &operator=(const X &other) {
         std::cout << "(CA)";
-        // ... to be implemented
+        X tmp(other);
+        swap(tmp);
+        return *this;
     }
 
-    X& operator=(X&& other) {
+    X &operator=(X &&other)  noexcept {
         std::cout << "(MA)";
-        // ... to be implemented
+        X tmp(other);
+        swap(tmp);
+        return *this;
     }
+
 #elif defined CASE3
     X& operator=(X other) {
         std::cout << "(UA)";
-        // ... to be implemented
+        swap(other);
+        return *this;
     }
 #endif
 };
