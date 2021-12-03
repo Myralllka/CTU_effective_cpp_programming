@@ -7,8 +7,6 @@
 #include <iostream>
 #include <utility>
 
-#define CASE1
-
 class X {
     int i_;                       // non-negative values represent content...
     static const int EMPTY = -1;  // -1 represents no content
@@ -38,7 +36,7 @@ public:
         }
         return *this;
     }
-
+    // No need of std::move int, it is already an rvalue
     X &operator=(X &&other) {
         std::cout << "(MA)";
         if (this != &other) {
