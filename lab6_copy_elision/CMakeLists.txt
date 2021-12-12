@@ -25,7 +25,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 include_directories(include)
 
 # Project source compilation
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/test.cpp)
 
 # Add external packages
 find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
