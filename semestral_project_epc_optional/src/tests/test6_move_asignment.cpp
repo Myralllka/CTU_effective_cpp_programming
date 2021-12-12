@@ -1,16 +1,12 @@
-//
-// Created by myralllka on 11/25/21.
-//
-
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE epc_optional_test_6
 
 #include <boost/test/included/unit_test.hpp>
 
-#include "optional.h"
-
 #include <cstdint>
-#include <optional>
 #include <utility>
+
+#include "optional.h"
 
 class X {
     static long constructed_;
@@ -93,8 +89,8 @@ long X::move_assigned_ = 0;
 long X::alive_ = 0;
 long X::destructed_ = 0;
 
-namespace ns = std;
-//namespace ns = epc;
+//namespace ns = std;
+namespace ns = epc;
 
 BOOST_AUTO_TEST_CASE(EpcOptionalTest6)
 {

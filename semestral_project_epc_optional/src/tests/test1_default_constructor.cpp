@@ -1,11 +1,10 @@
 #define BOOST_TEST_MODULE epc_optional_test_1
+#define BOOST_TEST_DYN_LINK
 
 #include <boost/test/included/unit_test.hpp>
 
 #include "optional.h"
-
 #include <cstdint>
-#include <optional>
 
 class X {
     int i_;

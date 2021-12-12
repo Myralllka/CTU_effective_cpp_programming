@@ -1,15 +1,11 @@
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
-
 #define BOOST_TEST_MODULE epc_optional_test_3
+#define BOOST_TEST_DYN_LINK
 
 #include <boost/test/included/unit_test.hpp>
+#include <utility>
+#include <cstdint>
 
 #include "optional.h"
-
-#include <cstdint>
-#include <optional>
-#include <utility>
 
 class X {
     static long constructed_;

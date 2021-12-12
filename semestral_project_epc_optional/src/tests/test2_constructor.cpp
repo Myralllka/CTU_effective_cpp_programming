@@ -1,11 +1,10 @@
+#define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE epc_optional_test_2
 
 #include <boost/test/included/unit_test.hpp>
+#include <cstdint>
 
 #include "optional.h"
-
-#include <cstdint>
-#include <optional>
 
 class X {
     static long constructed_;

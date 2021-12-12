@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.9)
 
 set(PROJECT_NAME semestral_project)
 project(${PROJECT_NAME} CXX)
@@ -12,7 +12,15 @@ set(ENABLE_PVS_STUDIO ON)
 #  Definitely enable it while developing.
 #  Disable it for the production builds and before submitting for grading!
 set(ENABLE_SANITIZERS ON)
+# Only one of Memory(MSAN), Address(ASAN), or Thread(TSan) sanitizers is applicable at the time
+set(ENABLE_UBSan ON)
 
+set(ENABLE_ASAN ON)
+set(ENABLE_TSan ON)
+set(ENABLE_MSAN OFF)
+
+add_definitions(-DBOOST_ALL_NO_LIB)
+add_definitions(-DBOOST_ALL_DYN_LINK)
 #set(CMAKE_CXX_COMPILER clang++)
 
 # warnings as errors should be imported here.
@@ -49,6 +57,7 @@ add_executable(test_8 src/tests/test8_swap_function.cpp)
 set_target_properties(${PROJECT_NAME}
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
 
 #####################################
 # Define ALL_TARGETS variable to use in PVS and Sanitizers

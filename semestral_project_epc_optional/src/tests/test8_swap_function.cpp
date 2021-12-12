@@ -1,11 +1,13 @@
+#define BOOST_TEST_DYN_LINK
+
 #define BOOST_TEST_MODULE epc_optional_test_8
 
 #include <boost/test/included/unit_test.hpp>
 
-#include "optional.h"
-
 #include <cstdint>
 #include <utility>
+
+#include "optional.h"
 
 namespace other_ns {
 
