@@ -9,6 +9,8 @@
 #include <utility>
 #include <memory>
 
+//#define DEBUG
+
 namespace epc {
     // within namespace epc:
     struct in_place_t {
@@ -133,14 +135,14 @@ namespace epc {
         }
 
         [[maybe_unused]] void swap(optional &other) {
+            if (not(other.m_has_value or m_has_value)) return;
 #ifdef DEBUG
             std::cout << "SWAP" << std::endl;
 #endif
-            if (std::is_swappable_v<T>) {
-                ptr()->swap(*other.ptr());
-            } else {
-                std::swap(*ptr(), *other.ptr());
-            }
+            using std::swap;
+
+            swap(m_has_value, other.m_has_value);
+            swap(*ptr(), *other.ptr());
         }
 
         [[maybe_unused]] void reset() {
@@ -151,10 +153,10 @@ namespace epc {
         }
 
 
-//        template<typename... Ts>
-//        void emplace(Ts &&... args) {
-//            std::cerr << "not implemented_yet" << std::endl;
-//        }
+        template<typename... Ts>
+        [[maybe_unused]] void emplace(Ts &&... args) {
+            optional<T>(in_place_t{}, std::forward<Ts>(args)...);
+        }
 
     };
 
