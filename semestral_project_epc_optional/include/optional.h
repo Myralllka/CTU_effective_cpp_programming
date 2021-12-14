@@ -135,14 +135,30 @@ namespace epc {
         }
 
         [[maybe_unused]] void swap(optional &other) {
-            if (not(other.m_has_value or m_has_value)) return;
 #ifdef DEBUG
             std::cout << "SWAP" << std::endl;
 #endif
-            using std::swap;
 
-            swap(m_has_value, other.m_has_value);
-            swap(*ptr(), *other.ptr());
+            if (not(other.m_has_value or m_has_value)) return;
+            if (other.m_has_value) {
+                if (m_has_value) {
+                    using std::swap;
+                    swap(**this, *other);
+                } else {
+                    m_has_value = true;
+                    std::construct_at<T>(ptr(), std::move(*other));
+                    other.reset();
+                }
+            } else if (m_has_value) {
+                std::construct_at<T>(other.ptr(), std::move(**this));
+                other.m_has_value = true;
+                reset();
+            }
+//            One more possible solution that also works
+//            But I implemented it as it was in project description
+//            if (not(other.m_has_value or m_has_value)) return;
+//            std::swap(m_has_value, other.m_has_value);
+//            std::swap(*ptr(), *other.ptr());
         }
 
         [[maybe_unused]] void reset() {
@@ -155,7 +171,9 @@ namespace epc {
 
         template<typename... Ts>
         [[maybe_unused]] void emplace(Ts &&... args) {
-            optional<T>(in_place_t{}, std::forward<Ts>(args)...);
+            reset();
+            std::construct_at<T>(ptr(), std::forward<Ts>(args)...);
+            m_has_value = true;
         }
 
     };
