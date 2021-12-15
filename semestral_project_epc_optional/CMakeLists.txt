@@ -48,6 +48,7 @@ add_executable(test_6 src/tests/test6_move_asignment.cpp)
 add_executable(test_7 src/tests/test7_swap.cpp)
 add_executable(test_8 src/tests/test8_swap_function.cpp)
 add_executable(test_9 src/tests/test9_emplace_reset_access.cpp)
+add_executable(test_gen src/tests/test10_general.cpp)
 
 # Add external packages
 #find_package(Boost 1.71.0 COMPONENTS program_options REQUIRED)
@@ -62,7 +63,7 @@ set_target_properties(test_1
 
 #####################################
 # Define ALL_TARGETS variable to use in PVS and Sanitizers
-set(ALL_TARGETS test_1 test_2 test_3 test_4 test_5 test_6 test_7 test_8 test_9)
+set(ALL_TARGETS test_1 test_2 test_3 test_4 test_5 test_6 test_7 test_8 test_9 test_gen)
 
 # Include fixed CMake configuration
 include(cmake/config.cmake)
